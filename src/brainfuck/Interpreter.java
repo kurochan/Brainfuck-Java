@@ -1,5 +1,3 @@
-package brainfuck;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -92,14 +90,54 @@ public class Interpreter {
 				}
 				break;
 			case '[':
+				if (!isLoopContinue()) {
+					toLoopEnd();
+				}
 				break;
 			case ']':
+				toLoopHead();
 				break;
 			}
 			pc++;
 		}
 		if (outFlag)
 			System.out.print("\n");
+	}
+
+	private boolean isLoopContinue() {
+		if (memory[ptr] == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	private void toLoopEnd() {
+		int nest = 1;
+		while (nest > 0) {
+			switch (code[++pc]) {
+			case '[':
+				nest++;
+				break;
+			case ']':
+				nest--;
+				break;
+			}
+		}
+	}
+
+	private void toLoopHead() {
+		int nest = 1;
+		while (nest > 0) {
+			switch (code[--pc]) {
+			case '[':
+				nest--;
+				break;
+			case ']':
+				nest++;
+				break;
+			}
+		}
+		pc--;
 	}
 
 	private void dump() {
